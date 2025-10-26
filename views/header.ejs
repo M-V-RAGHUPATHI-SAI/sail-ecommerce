@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>header</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap">
+  <style>
+     /* Navbar styling */
+     * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 20px;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  .navbar .logo {
+    display: flex;
+    align-items: center;
+  }
+  
+  .navbar .logo img {
+    height: 60px;
+    margin-right: 10px;
+  }
+  
+  .navbar .logo a {
+    text-decoration: none;
+    color: #333;
+    font-size: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  .navbar .search-bar {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+    margin: 0 50px;
+  }
+  
+  .navbar .search-bar input {
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    outline: none;
+  }
+  
+  .navbar .search-bar button {
+    padding: 10px 15px;
+    background-color: #0077cc; /* Button color */
+    color: white;
+    border: none;
+    border-radius: 20px;
+    margin-left: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .navbar .nav-icons {
+    display: flex;
+    align-items: center;
+  }
+  
+  .navbar .nav-icons a,
+  .navbar .nav-icons button {
+    color: #333;
+    margin-left: 38px;
+    font-size: 18px;
+    text-decoration: none;
+    position: relative;
+  }
+  
+  .navbar .nav-icons a:hover,
+  .navbar .nav-icons button:hover {
+    color: rgb(41,83,174);
+  }
+  
+  .navbar .nav-icons button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .navbar .nav-icons .location-btn {
+    display: flex;
+    align-items: center;
+  }
+  
+  .navbar .nav-icons .location-btn i {
+    margin-right: 5px;
+  }
+  
+  /* Namespaced Modal Styling */
+.location-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+}
+
+.location-modal-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+  position: relative;
+}
+
+.location-modal-header {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
+.location-modal-text {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.location-sign-in-box {
+  display: inline-block;
+  border: 1px solid #0073e6;
+  padding: 10px 20px;
+  border-radius: 20px;
+  margin: 10px 0;
+  cursor: pointer;
+  color: #0073e6;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.location-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 15px;
+}
+
+.location-saved-address {
+  margin-top: 20px;
+}
+  </style>
+</head>
+<body>
+   <!-- Navbar -->
+   <nav class="navbar">
+    <div class="logo">
+      <a href="/"><img src="/images/cdf4c76e-43ea-4b74-afb4-2d394a8885c6.jpg" alt="SAIL Logo" width="60px"></a>
+      <a href="/">Sail</a>
+    </div>
+    <div class="nav-icons">
+      <button class="location-btn" onclick="openModal()"><i class="fa-solid fa-location-dot"></i> Update Location</button>
+    </div>
+    <div class="search-bar">
+      <form id="searchForm" style="width: 100%; display: flex;">
+        <input type="text" id="searchInput" placeholder="Search for products" name="query" required>
+        <button type="button" aria-label="Search Products" onclick="performSearch()">
+            <i class="fas fa-search"></i>
+        </button>
+    </form>
+      
+  </div>
+  
+    <div class="nav-icons">
+      <a href="/orders">Orders</a>
+      <a href="/cart"><i class="fa-solid fa-cart-shopping"></i></a>
+      <a href="account.html"><i class="fa-solid fa-user"></i></a>
+    </div>
+  </nav>
+   <!-- Update Location Modal -->
+   <div class="location-modal" id="locationModal">
+    <div class="location-modal-content">
+      <button class="location-close-btn" onclick="closeModal()">×</button>
+      <div class="location-modal-header">Choose Your Location</div>
+      <div class="location-modal-text">Select a delivery location to see product availability and delivery options.</div>
+
+      <!-- "Your Address" label -->
+      <label for="currentAddress" style="font-weight: bold; color: #0077cc;">Your Address:</label>
+      <div class="location-saved-address" id="savedAddresses">
+        <!-- Saved addresses will be displayed here dynamically -->
+        <% if (Object.keys(addressDetails).length > 0) { %>
+          <!-- Display address details -->
+          <p><strong>Address:</strong> <%= addressDetails.address %></p>
+          <p><strong>City:</strong> <%= addressDetails.city %></p>
+          <p><strong>State:</strong> <%= addressDetails.state %></p>
+          <p><strong>Country:</strong> <%= addressDetails.country %></p>
+          <p><strong>Pincode:</strong> <%= addressDetails.pincode %></p>
+        <% } else { %>
+          <!-- Handle no address details case -->
+          <p>No address details available.</p>
+        <% } %>
+      </div>
+      <br>
+      <a href="/address/<%=addressDetails.id%>" class="location-sign-in-box">Add New Address</a>
+      
+    </div>
+  </div>
+
+
+  <script>
+    // Open Modal
+function openModal() {
+  document.getElementById('locationModal').style.display = 'flex';
+  loadSavedAddresses(); // Load saved addresses when the modal is opened
+}
+
+// Close Modal
+function closeModal() {
+  document.getElementById('locationModal').style.display = 'none';
+}
+
+function performSearch() {
+    const query = document.getElementById('searchInput').value.trim(); // Convert input to lowercase
+    if (query) {
+        window.location.href = `/search?query=${encodeURIComponent(query)}`; // Redirect to the search route
+    } else {
+        alert('Please enter a search term.'); // Alert if input is empty
+    }
+}
+
+
+  </script>
+</body>
+</html>

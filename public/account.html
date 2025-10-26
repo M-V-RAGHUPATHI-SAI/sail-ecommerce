@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login/Signup Page</title>
+    <style>
+        /* Add your styles here */
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin-top: 100px; /* Added margin to push the form down slightly */
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px; /* Reduced margin */
+            text-align: center;
+        }
+        .form-container {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            padding: 20px; /* Reduced padding */
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            display: none;
+            margin-top: 10px; /* Added small margin to space from the toggle buttons */
+        }
+        input[type="text"], input[type="email"], input[type="password"], input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .button-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #0077cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .button-container button:hover {
+            background-color: rgb(41, 83, 174);
+        }
+        .login-signup-toggle {
+            margin-top: 10px; /* Reduced margin */
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 25px;
+            background-color: #f1f1f1;
+            overflow: hidden;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+        .login-signup-toggle div {
+            flex: 1;
+            text-align: center;
+            padding: 10px 0;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .login-signup-toggle .active {
+            background-color: #0077cc;
+            color: white;
+        }
+        .image {
+            width: 120px; /* Increased width for better appearance */
+            height: 120px;
+            border-radius: 50%; /* Circular profile picture */
+            margin-bottom: 10px; /* Reduced margin */
+        }
+        .forgot-password {
+            margin-top: 10px;
+            text-align: center;
+            display: none; /* Hidden by default */
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <img src="images/cdf4c76e-43ea-4b74-afb4-2d394a8885c6.jpg" alt="Logo" class="image"> <!-- Replace with your logo -->
+    <h1>Sail</h1>
+    <div class="login-signup-toggle">
+        <div id="login-toggle" onclick="toggleForm('login')">Login</div>
+        <div id="signup-toggle" onclick="toggleForm('signup')" class="active">Signup</div>
+    </div>
+
+    <div id="login-form" class="form-container">
+        <h2>Login</h2>
+        <form action="/login" method="POST">
+            <input type="email" name="email" id="loginEmail" placeholder="Email" required>
+            <input type="password" name="password" id="loginPassword" placeholder="Password" required>
+            <div class="button-container">
+                <button type="submit">Login</button>
+            </div>
+        </form>
+        <div class="forgot-password">
+            <a href="#">Forgot Password?</a>
+        </div>
+    </div>
+
+    <div id="signup-form" class="form-container">
+        <h2>Signup</h2>
+        <form action="/signup" method="POST">
+            <input type="text" name="first_name" placeholder="First Name" required>
+            <input type="text" name="last_name" placeholder="Last Name" required>
+            <input type="date" name="date_of_birth" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <input type="text" name="phno" placeholder="Phone Number" required>
+            <input type="text" name="address" placeholder="Address" required>
+            <input type="text" name="city" placeholder="City" required>
+            <input type="text" name="state" placeholder="State" required>
+            <input type="text" name="country" placeholder="Country" required>
+            <input type="text" name="pincode" placeholder="Pincode" required>
+            <div class="button-container">
+                <button type="submit">Signup</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function toggleForm(formType) {
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+        const loginToggle = document.getElementById('login-toggle');
+        const signupToggle = document.getElementById('signup-toggle');
+
+        if (formType === 'login') {
+            loginForm.style.display = 'block';
+            signupForm.style.display = 'none';
+            loginToggle.classList.add('active');
+            signupToggle.classList.remove('active');
+        } else {
+            loginForm.style.display = 'none';
+            signupForm.style.display = 'block';
+            signupToggle.classList.add('active');
+            loginToggle.classList.remove('active');
+        }
+    }
+
+    window.onload = function() {
+        toggleForm('signup'); // Show signup form by default
+    };
+
+    
+</script>
+</body>
+</html>

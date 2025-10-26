@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.3rem;
+            margin-bottom: 30px;
+            color: #0077cc;
+        }
+        .cart-item {
+            display: grid;
+            grid-template-columns: 100px 2fr 1fr 1fr 50px;
+            gap: 20px;
+            background-color: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            align-items: center;
+        }
+        .cart-image img {
+            width: 100%;
+            border-radius: 5px;
+        }
+        .cart-details h3 {
+            margin: 0;
+            font-size: 1.2em;
+            color: #343a40;
+        }
+        .cart-details p {
+            margin: 5px 0;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        .cart-price p {
+            font-size: 1.2em;
+            color: #28a745;
+            margin: 0;
+        }
+        .cart-quantity label {
+            font-size: 0.85em;
+            margin-bottom: 5px;
+            color: #6c757d;
+        }
+        .cart-quantity input {
+            width: 50px;
+            padding: 5px;
+            text-align: center;
+            border-radius: 5px;
+            border: 1px solid #ced4da;
+        }
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+        .total-section {
+            text-align: right;
+            margin-top: 10px;
+            margin-right: 80px;
+            margin-bottom: 20px;
+        }
+        .total-section h3 {
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+        .checkout-btn {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .checkout-btn:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 768px) {
+            .cart-item {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('header') %> <!-- Include your navbar here -->
+    <div class="container" id="cart-items">
+        <h1>Your Shopping Cart</h1>
+        <% if (cartItems.length > 0) { %>
+            <% cartItems.forEach(item => { %>
+                <div class="cart-item">
+                    <div class="cart-image">
+                        <img src="/images/pd<%= item.p_id%>pic1.jpg" alt="<%= item.title %>"  width="20px" height="100px"> 
+                    </div>
+                    <div class="cart-details">
+                        <h3><%= item.p_name %></h3>
+                        <p><%= item.description %></p>
+                    </div>
+                    <div class="cart-price">
+                        <p>₹<%= item.p_price %></p>
+                    </div>
+                    <div class="cart-quantity">
+                        <label for="quantity<%= item.product_id %>">Qty:</label>
+                        <input type="number" id="quantity<%= item.product_id %>" value="<%= item.quantity %>" min="1" onchange="updateCartQuantity(<%= item.cart_id %>, this.value)">
+                    </div>
+                    <div>
+                        <button class="delete-btn" onclick="removeFromCart(<%= item.cart_id %>)">Remove</button>
+                    </div>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <h2>Your cart is currently empty.</h2>
+        <% } %>
+    </div>
+
+    <div class="total-section">
+        <h3 id="total-price">Total: ₹0.00</h3>
+        <form id="checkout-form" action="/payment" method="POST">
+            <input type="hidden" name="cartItems" value='<%= JSON.stringify(cartItems) %>'>
+            <button type="submit" class="checkout-btn" >Proceed to Checkout</button>
+        </form>
+    </div>
+    <%- include('footer') %> <!-- Include your footer here -->
+    <script>
+        function calculateTotal() {
+            let total = 0;
+            document.querySelectorAll('.cart-item').forEach(item => {
+                const price = parseFloat(item.querySelector('.cart-price p').innerText.replace('₹', ''));
+                const quantity = parseInt(item.querySelector('.cart-quantity input').value);
+                total += price * quantity; // Add up prices considering quantity
+            });
+            document.getElementById('total-price').innerText = `Total: ₹${total.toFixed(2)}`;
+        }
+
+        function updateCartQuantity(cartId, newQuantity) {
+    fetch(`/update-cart/${cartId}`, {  // Update the URL to include the cartId
+        method: 'PUT',  // Change to PUT to match the server route
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ quantity: newQuantity }),  // Send only the quantity
+    })
+    .then(response => {
+        if (response.ok) {
+            calculateTotal(); // Recalculate total after updating quantity
+            alert('Quantity updated successfully!'); // Optional: show success message
+        } else {
+            alert('Failed to update quantity');
+        }
+    })
+    .catch(error => console.error('Error updating quantity:', error));
+}
+
+        async function removeFromCart(cartId) {
+    try {
+        const response = await fetch(`/remove-from-cart/${cartId}`, {
+            method: 'DELETE',
+        });
+
+        if (response.ok) {
+            location.reload(); // Reload the page to reflect changes
+        } else {
+            alert('Failed to remove item from cart');
+        }
+    } catch (error) {
+        console.error('Error removing item from cart:', error);
+    }
+}
+
+
+        window.onload = calculateTotal; // Calculate total on load
+    </script>
+</body>
+</html>

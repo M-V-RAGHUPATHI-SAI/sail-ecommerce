@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Page</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e9ecef;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            margin: 50px auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .form-section {
+            width: 65%;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-summary {
+            width: 30%;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2em;
+            color: #343a40;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #495057;
+            padding: 10px;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 1em;
+        }
+
+        button {
+            background-color: #0077cc;
+            border: none;
+            color: white;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: scale(1.02);
+        }
+
+        .order-summary h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #0077cc;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding: 10px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .summary-item h3 {
+            font-size: 1.2em;
+            color: #6c757d;
+        }
+
+        .summary-item p {
+            font-size: 1.2em;
+            color: #212529;
+        }
+
+        .total-price {
+            text-align: right;
+            font-size: 1.5em;
+            color: #28a745;
+            margin-top: 20px;
+        }
+
+        /* Hideable sections */
+        .hidden {
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-section">
+            <h1>Payment Information</h1>
+
+            <!-- <input type="hidden" id="customer-id" value="<%# customer_id %>">  -->
+            <!-- Assuming you're passing customer_id from the server -->
+
+
+            <!-- Address Selection Section -->
+            <div class="section">
+                
+
+                <div id="new-address-section" class="hidden">
+                    <input type="text" placeholder="Full Name" id="name" required>
+                    <input type="text" placeholder="Address Line 1" id="addr1" required>
+                    <input type="text" placeholder="Address Line 2" id="addr2">
+                    <input type="text" placeholder="City" id="city" required>
+                    <input type="text" placeholder="State" id="state" required>
+                    <input type="text" placeholder="Postal Code" id="postal" required>
+                    <select id="country" required>
+                        <option value="">Country</option>
+                        <option value="IN">India</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Payment Method Section -->
+            <div class="section">
+                <h2>Select Payment Method</h2>
+                <form action=""></form>
+                <select id="payment-method" required>
+                    <option value="">Select Payment Method</option>
+                    <option value="upi">UPI</option>
+                    <option value="card">Card</option>
+                    <option value="cod">Cash on Delivery</option>
+                </select>
+                
+
+                <!-- UPI Section -->
+                <div id="upi-section" class="hidden">
+                    <input type="text" placeholder="Enter UPI ID" id="upi-id" required>
+                </div>
+
+                <!-- Card Section -->
+                <div id="card-section" class="hidden">
+                    <input type="text" placeholder="Card Number" id="card-number" required>
+                    <input type="text" placeholder="CVV" id="cvv" required>
+                    <input type="text" placeholder="Expiry Date (MM/YY)" id="expiry-date" required>
+                </div>
+            </div>
+            <form action="/create-order" method="POST">
+                <input type="hidden" name="customerId" value="<%= customerId %>">
+                <!-- Remove the totalAmount input -->
+                <input type="hidden" name="cartItems" value="<%= JSON.stringify(products) %>">
+                <button type="submit">Proceed to Payment</button>
+            </form>
+            
+            
+            
+        </div>
+
+        <div class="order-summary">
+            <h2>Order Summary</h2>
+            <div id="cart-summary">
+                <% let totalPrice = 0; %>
+                <% let shippingCost = 100; %> <!-- Adjust shipping cost accordingly -->
+                <% if (products && products.length > 0) { %>
+                    <% products.forEach(product => { %>
+                        <div class="summary-item">
+                            <img src="/images/pd<%= product.id %>pic1.jpg" alt="<%= product.name %>" height="180px" width="150px" class="product-image">
+                            <div>
+                                <h3><%= product.name %></h3>
+                                <p>Price: ₹<%= product.price.toFixed(2) %></p>
+                                <p>Quantity: <%= product.quantity %></p>
+                            </div>
+                        </div>
+                        <% totalPrice += product.price * product.quantity; %>
+                    <% }); %>
+                <% } else { %>
+                    <p>No items in cart.</p>
+                <% } %>
+            </div>
+        
+            <% let gst = totalPrice * 0.18; %>
+            <% let totalAmount = totalPrice + shippingCost + gst; %>
+            
+            <br>
+            <div class="shipping" id="summary-shipping">Shipping: ₹<%= shippingCost.toFixed(2) %></div>
+            <br>
+            <div class="gst" id="summary-gst">GST: ₹<%= gst.toFixed(2) %></div>
+            <br>
+            <div class="total-price" id="summary-total-price">Total: ₹<%= totalAmount.toFixed(2) %></div>
+        </div>
+        
+        
+        <script>
+            // Sample cart data (to be replaced with dynamic data from the server)
+            const cartItems = [
+                <% products.forEach(function(product) { %>
+                    { id: <%= product.id %>, name: "<%= product.name %>", price: <%= product.price %>, image: "/images/pd<%= product.id %>pic1.jpg", quantity: <%= product.quantity %> }
+                <% }); %>
+            ];
+        
+            const shippingCost = 100; // Sample shipping cost
+            const gstPercentage = 0.18; // Sample GST percentage
+        
+            // Function to calculate GST, Shipping, and Total
+            const calculateTotal = () => {
+                let totalPrice = 0;
+                cartItems.forEach(item => {
+                    totalPrice += item.price * item.quantity;
+                });
+        
+                const gstAmount = totalPrice * gstPercentage;
+                const finalTotal = totalPrice + shippingCost + gstAmount;
+        
+                return {
+                    totalPrice: totalPrice.toFixed(2),
+                    gstAmount: gstAmount.toFixed(2),
+                    finalTotal: finalTotal.toFixed(2)
+                };
+            };
+        
+            // Function to populate cart summary
+            const populateCartSummary = () => {
+                const cartSummary = document.getElementById('cart-summary');
+                cartSummary.innerHTML = ''; // Clear existing items
+        
+                cartItems.forEach(item => {
+                    const itemTotal = item.price * item.quantity;
+        
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'summary-item';
+                    itemDiv.innerHTML = `
+                        <img src="${item.image}" alt="${item.name}" class="product-image" height="200px" width="150px">
+                        <div>
+                            <h3>${item.name}</h3>
+                            <p>Price: ₹${item.price.toFixed(2)}</p>
+                            <p>Quantity: ${item.quantity}</p>
+                        </div>
+                    `;
+                    cartSummary.appendChild(itemDiv);
+                });
+        
+                const totals = calculateTotal();
+        
+                document.getElementById('summary-total-price').innerText = `Total: ₹${totals.finalTotal}`;
+                document.getElementById('summary-shipping').innerText = `Shipping: ₹${shippingCost.toFixed(2)}`;
+                document.getElementById('summary-gst').innerText = `GST: ₹${totals.gstAmount}`;
+            };
+        
+            // Handle address selection
+            document.getElementById('address-select').addEventListener('change', function () {
+                const newAddressSection = document.getElementById('new-address-section');
+                newAddressSection.classList.toggle('hidden', this.value !== 'new');
+            });
+        
+            document.getElementById('payment-method').addEventListener('change', function () {
+    const upiSection = document.getElementById('upi-section');
+    const cardSection = document.getElementById('card-section');
+    upiSection.classList.add('hidden');
+    cardSection.classList.add('hidden');
+
+    if (this.value === 'upi') {
+        upiSection.classList.remove('hidden');
+    } else if (this.value === 'card') {
+        cardSection.classList.remove('hidden');
+    }
+});
+
+// Populate cart summary on page load
+document.addEventListener('DOMContentLoaded', populateCartSummary);
+
+        
+            // Populate cart summary on page load
+            document.addEventListener('DOMContentLoaded', populateCartSummary);
+            // Function to populate cart summary (as previously implemented)
+
+            // Handle payment button click
+            document.getElementById('payment-button').addEventListener('click', function () {
+                // const customerId = document.getElementById('customer-id').value;
+                const selectedPaymentMethod = document.getElementById('payment-method').value;
+                let amount = document.getElementById('summary-total-price').innerText.replace('Total: ₹', '');
+
+                // if (!customerId || !selectedPaymentMethod) {
+                //     alert('Please select a payment method.');
+                //     return;
+                // }
+
+                // Prepare data for sending to the server
+                const paymentData = {
+                    // customer_id: customerId,
+                    payment_method: selectedPaymentMethod,
+                    amount: parseFloat(amount) // Ensure the amount is a number
+                };
+
+                // Send payment data to the server
+                fetch('/payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(paymentData)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error('Payment failed');
+                })
+                .then(data => {
+                    alert('Payment processed successfully: ' + data.message);
+                    // Redirect or perform other actions after successful payment
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while processing the payment.');
+                });
+            });
+        </script>
+        
+</body>
+</html>

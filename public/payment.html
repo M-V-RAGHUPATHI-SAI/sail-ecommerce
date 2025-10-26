@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Page</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e9ecef;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            margin: 50px auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .form-section {
+            width: 65%;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-summary {
+            width: 30%;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2em;
+            color: #343a40;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #495057;
+            padding: 10px;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 1em;
+        }
+
+        button {
+            background-color: #0077cc;
+            border: none;
+            color: white;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: scale(1.02);
+        }
+
+        .order-summary h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #0077cc;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding: 10px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .summary-item h3 {
+            font-size: 1.2em;
+            color: #6c757d;
+        }
+
+        .summary-item p {
+            font-size: 1.2em;
+            color: #212529;
+        }
+
+        .summary-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-right: 15px;
+        }
+
+        .total-price {
+            text-align: right;
+            font-size: 1.5em;
+            color: #28a745;
+            margin-top: 20px;
+        }
+
+        /* Hideable sections */
+        .hidden {
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-section">
+            <h1>Payment Information</h1>
+
+            <!-- Address Selection Section -->
+            <div class="section">
+                <h2>Select Address</h2>
+                <select id="address-select" required>
+                    <option value="">Choose Address</option>
+                    <option value="1">Home - 123 Street, City</option>
+                    <option value="2">Office - 456 Avenue, City</option>
+                    <option value="new">Enter New Address</option>
+                </select>
+
+                <div id="new-address-section" class="hidden">
+                    <input type="text" placeholder="Full Name" id="name">
+                    <input type="text" placeholder="Address Line 1" id="addr1">
+                    <input type="text" placeholder="Address Line 2" id="addr2">
+                    <input type="text" placeholder="City" id="city">
+                    <input type="text" placeholder="State" id="state">
+                    <input type="text" placeholder="Postal Code" id="postal">
+                    <select id="country" required>
+                        <option value="">Country</option>
+                        <option value="IN">India</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Payment Method Section -->
+            <div class="section">
+                <h2>Select Payment Method</h2>
+                <select id="payment-method" required>
+                    <option value="">Select Payment Method</option>
+                    <option value="upi">UPI</option>
+                    <option value="card">Card</option>
+                    <option value="cod">Cash on Delivery</option>
+                </select>
+
+                <!-- UPI Section -->
+                <div id="upi-section" class="hidden">
+                    <input type="text" placeholder="Enter UPI ID" id="upi-id">
+                </div>
+
+                <!-- Card Section -->
+                <div id="card-section" class="hidden">
+                    <input type="text" placeholder="Card Number" id="card-number">
+                    <input type="text" placeholder="CVV" id="cvv">
+                    <input type="text" placeholder="Expiry Date (MM/YY)" id="expiry-date">
+                </div>
+            </div>
+
+            <button>Proceed to Payment</button>
+        </div>
+
+        <div class="order-summary">
+            <h2>Order Summary</h2>
+            <div id="cart-summary"></div>
+            <div class="total-price" id="summary-total-price">Total: ₹0.00</div>
+        </div>
+    </div>
+
+    <script>
+        // Show/Hide sections based on selection
+        document.getElementById('address-select').addEventListener('change', function() {
+            if (this.value === 'new') {
+                document.getElementById('new-address-section').classList.remove('hidden');
+            } else {
+                document.getElementById('new-address-section').classList.add('hidden');
+            }
+        });
+
+        document.getElementById('payment-method').addEventListener('change', function() {
+            const upiSection = document.getElementById('upi-section');
+            const cardSection = document.getElementById('card-section');
+
+            upiSection.classList.add('hidden');
+            cardSection.classList.add('hidden');
+
+            if (this.value === 'upi') {
+                upiSection.classList.remove('hidden');
+            } else if (this.value === 'card') {
+                cardSection.classList.remove('hidden');
+            }
+        });
+
+        function loadCartSummary() {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let cartSummaryDiv = document.getElementById('cart-summary');
+    let total = 0;
+    const shippingCost = 100; // Shipping cost
+    const gstRate = 0.18; // GST rate (18%)
+
+    cartSummaryDiv.innerHTML = ''; // Clear previous summary
+    cart.forEach(item => {
+        total += item.price * item.quantity;
+
+        let summaryItem = document.createElement('div');
+        summaryItem.classList.add('summary-item');
+        summaryItem.innerHTML = `
+            <img src="${item.image}" alt="${item.name}">
+            <h3>${item.name} x ${item.quantity}</h3>
+            <p>₹${(item.price * item.quantity).toFixed(2)}</p>
+        `;
+        cartSummaryDiv.appendChild(summaryItem);
+    });
+
+    const gstAmount = total * gstRate; // Calculate GST
+    const finalTotal = total + shippingCost + gstAmount; // Final total
+
+    // Display the summary of costs
+    cartSummaryDiv.innerHTML += `
+        <div class="summary-item"><h3>Shipping Cost</h3><p>₹${shippingCost.toFixed(2)}</p></div>
+        <div class="summary-item"><h3>GST (18%)</h3><p>₹${gstAmount.toFixed(2)}</p></div>
+    `;
+
+    document.getElementById('summary-total-price').innerText = `Total: ₹${finalTotal.toFixed(2)}`;
+}
+
+
+        window.onload = loadCartSummary;
+    </script>
+</body>
+</html>

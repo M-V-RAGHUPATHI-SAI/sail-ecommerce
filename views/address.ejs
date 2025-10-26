@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Address</title>
+    <style>
+        body {
+            font-family: 'Helvetica', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f4f8;
+        }
+
+        .container {
+            max-width: 450px;
+            margin: 60px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0 20px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: #f9f9f9;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="checkbox"] {
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+
+        .checkbox-label {
+            display: inline;
+            font-size: 14px;
+            color: #555;
+            vertical-align: middle;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #0077cc;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: rgb(41, 83, 174);
+        }
+
+       
+
+        .container::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(135deg, #0077cc, #0077cc);
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .container h2 {
+            color: #0077cc;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Add a New Address</h2>
+        <input type="hidden" id="customerId" value="<%= customerId %>"> <!-- Set customerId dynamically -->
+        
+        <label for="country">Country</label>
+        <select id="country" name="country">
+            <option value="india">India</option>
+            <!-- Add more countries as needed -->
+        </select>
+
+        <label for="full-name">Full name (First and Last name)</label>
+        <input type="text" id="full-name" name="full-name" placeholder="Full name" required>
+
+        <label for="mobile-number">Mobile number</label>
+        <input type="tel" id="mobile-number" name="mobile-number" placeholder="Mobile number" required>
+
+        <label for="address-1">Flat, House no., Building, Company, Apartment</label>
+        <input type="text" id="address-1" name="address-1" placeholder="Flat/House no.">
+
+        <label for="pincode">Pincode</label>
+        <input type="number" id="pincode" name="pincode" placeholder="6-digit Pincode" required>
+
+        <label for="town-city">Town/City</label>
+        <input type="text" id="town-city" name="town-city" placeholder="Town/City" required>
+
+        <label for="state">State</label>
+        <input type="text" id="state" name="state" placeholder="State" required>
+    
+        <input type="checkbox" id="default-address" name="default-address">
+        <label class="checkbox-label" for="default-address">Make this my default address</label>
+        
+        <br> <br>
+        <button type="submit" onclick="submitAddressForm()">Add Address</button>
+    </div>
+
+    <script>
+        async function submitAddressForm() {
+            const customerId = document.getElementById('customerId').value; // Get the customer ID from a hidden input field
+            const addressData = {
+                'full-name': document.getElementById('full-name').value,
+                'mobile-number': document.getElementById('mobile-number').value,
+                'address-1': document.getElementById('address-1').value,
+                'town-city': document.getElementById('town-city').value,
+                'state': document.getElementById('state').value,
+                'country': document.getElementById('country').value,
+                'pincode': document.getElementById('pincode').value,
+                'default-address': document.getElementById('default-address').checked // Check if it's set as default
+            };
+    
+            try {
+                const response = await fetch(`/update-address/${customerId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(addressData)
+                });
+    
+                const result = await response.json();
+                if (response.ok) {
+                    alert(result.message);
+                    // Optionally redirect or clear the form
+                    // location.reload(); // Uncomment to reload the page
+                } else {
+                    alert(result.error);
+                }
+            } catch (error) {
+                console.error('Error updating address:', error);
+                alert('An error occurred while updating the address.');
+            }
+        }
+    </script>
+</body>
+</html>
