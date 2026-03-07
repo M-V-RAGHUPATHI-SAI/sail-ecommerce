@@ -115,11 +115,11 @@
             <% cartItems.forEach(item => { %>
                 <div class="cart-item">
                     <div class="cart-image">
-                        <img src="/images/pd<%= item.p_id%>pic1.jpg" alt="<%= item.title %>"  width="20px" height="100px"> 
+                        <img src="/images/pd<%= item.p_id%>pic1.jpg" alt="<%= item.title %>" onerror="this.src='/images/pd1pic1.jpg'"> 
                     </div>
                     <div class="cart-details">
                         <h3><%= item.p_name %></h3>
-                        <p><%= item.description %></p>
+                        <p><%= item.description || '' %></p>
                     </div>
                     <div class="cart-price">
                         <p>₹<%= item.p_price %></p>
@@ -134,15 +134,22 @@
                 </div>
             <% }) %>
         <% } else { %>
-            <h2>Your cart is currently empty.</h2>
+            <h2 style="text-align: center; color: #555;">Your cart is currently empty.</h2>
+            <div style="text-align: center; margin-top:20px;">
+                <a href="/" style="padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">Continue Shopping</a>
+            </div>
         <% } %>
     </div>
 
     <div class="total-section">
-        <h3 id="total-price">Total: ₹0.00</h3>
+        <h3 id="total-price">Total: ₹<%= typeof cartTotal !== 'undefined' ? cartTotal.toFixed(2) : '0.00' %></h3>
         <form id="checkout-form" action="/payment" method="POST">
             <input type="hidden" name="cartItems" value='<%= JSON.stringify(cartItems) %>'>
-            <button type="submit" class="checkout-btn" >Proceed to Checkout</button>
+            <% if (cartItems.length > 0) { %>
+                <button type="submit" class="checkout-btn">Proceed to Checkout</button>
+            <% } else { %>
+                <button type="button" class="checkout-btn" style="background-color: #ccc; cursor: not-allowed;" disabled>Proceed to Checkout</button>
+            <% } %>
         </form>
     </div>
     <%- include('footer') %> <!-- Include your footer here -->

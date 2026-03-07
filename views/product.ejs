@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= product.p_name %> - Sail.in</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f9f9f9; }
+        .product-container { display: flex; justify-content: space-between; width: 100vw; height: auto; background-color: white; border-radius: 8px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); overflow: hidden; }
+        .image-gallery { display: flex; flex-direction: column; padding: 20px; margin: 0; }
+        .image-gallery img { width: 70px; height: 70px; margin-bottom: 10px; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; transition: border-color 0.3s; }
+        .image-gallery img:hover { border-color: #007bff; }
+        .main-image { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .main-image img { width: 400px; height: auto; border-radius: 8px; border: 1px solid #ddd; object-fit: contain; }
+        .product-info { flex: 1; padding: 20px; display: flex; flex-direction: column; justify-content: flex-start; }
+        .product-info h1 { font-size: 24px; margin-bottom: 10px; }
+        .rating { font-size: 16px; color: #555; margin-bottom: 15px; }
+        .rating span:first-child { font-weight: bold; color: #ff9800; }
+        .price { font-size: 24px; color: #b12704; margin-bottom: 10px; }
+        .size, .offers, .delivery { margin-bottom: 20px; }
+        label { font-weight: bold; }
+        #size { padding: 8px; margin-left: 10px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px; }
+        .offers h4, .delivery h4 { margin-bottom: 10px; color: #007bff; }
+        .offers div, .delivery div { margin-bottom: 5px; color: #333; }
+        .buttons { display: flex; gap: 20px; margin-top: 20px; }
+        .buttons button { padding: 15px 20px; font-size: 16px; border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.3s; flex: 1; }
+        .add-to-cart { background-color: #f0c14b; color: #111; }
+        .buy-now { background-color: #ff9900; color: white; }
+        .add-to-cart:hover { background-color: #ddb347; }
+        .buy-now:hover { background-color: #e68a00; }
+        .stock-info { font-weight: bold; margin-bottom: 10px; color: green; }
+        .out-of-stock { color: red; }
+    </style>
+</head>
+<body>
+    <%- include('header') %>
+
+    <div class="product-container">
+        <!-- Assume some images will be broken if they don't exist since we rely on file naming conventions here, but that's what we have -->
+        <div class="image-gallery">
+            <img src="/images/pd<%= product.p_id %>pic1.jpg" onerror="this.src='/images/pd1pic1.jpg'" alt="Thumbnail 1" onclick="changeImage(this.src)">
+            <img src="/images/pd<%= product.p_id %>pic2.jpg" onerror="this.src='/images/pd1pic2.jpg'" alt="Thumbnail 2" onclick="changeImage(this.src)">
+            <img src="/images/pd<%= product.p_id %>pic3.jpg" onerror="this.src='/images/pd1pic3.jpg'" alt="Thumbnail 3" onclick="changeImage(this.src)">
+        </div>
+
+        <div class="main-image" id="mainImageContainer">
+            <img src="/images/pd<%= product.p_id %>pic1.jpg" onerror="this.src='/images/pd1pic1.jpg'" alt="Main Image" id="mainImage">
+        </div>
+
+        <div class="product-info">
+            <h1><%= product.p_name %></h1>
+            <p style="color: grey; font-size: 14px; margin-top: -5px;"><%= product.p_descpt %></p>
+            
+            <div class="rating">
+                <span>4.4 ★</span> <span>(Ratings)</span>
+            </div>
+            <div class="price">₹<%= product.p_price %></div>
+            <div class="stock-info <%= product.p_stock > 0 ? '' : 'out-of-stock' %>">
+                <%= product.p_stock > 0 ? "In Stock: " + product.p_stock : "Out of Stock" %>
+            </div>
+
+            <div class="offers">
+                <h4>Offers</h4>
+                <div>Bank Offer: Upto ₹1,500.00 discount on select bank cards</div>
+            </div>
+            <div class="delivery">
+                <h4>Delivery</h4>
+                <div>Standard FREE delivery.</div>
+            </div>
+
+            <div class="buttons">
+                <% if(product.p_stock > 0) { %>
+                <button id="add-to-cart" class="add-to-cart" onclick="addToCart(<%= product.p_id %>)">Add to Cart</button>
+                <form action="/payment" method="POST" style="flex:1; display:flex;">
+                    <input type="hidden" name="product_id" value="<%= product.p_id %>">
+                    <button type="submit" class="buy-now" style="width: 100%;">Buy Now</button>
+                </form>
+                <% } else { %>
+                    <button class="add-to-cart" disabled style="background-color: #ccc; cursor: not-allowed;">Currently Unavailable</button>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    <br>
+    
+    <%- include('footer') %>
+
+    <script>
+        function changeImage(imageUrl) {
+            document.getElementById('mainImage').src = imageUrl; 
+        }
+
+        async function addToCart(productId) {
+            try {
+                const response = await fetch('/add-to-cart', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId })
+                });
+
+                if (response.redirected) {
+                    window.location.href = response.url; // redirect to cart or login
+                    return;
+                }
+
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                alert('Product added to cart!');
+                window.location.href = '/cart';
+            } catch (error) {
+                console.error('Error adding product to cart:', error);
+                alert('Error adding product to cart. Please ensure you are logged in.');
+            }
+        }
+    </script>
+</body>
+</html>

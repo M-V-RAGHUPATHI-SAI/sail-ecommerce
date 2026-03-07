@@ -179,7 +179,9 @@
       <a href="/">Sail</a>
     </div>
     <div class="nav-icons">
-      <button class="location-btn" onclick="openModal()"><i class="fa-solid fa-location-dot"></i> Update Location</button>
+      <% if (customerId) { %>
+        <button class="location-btn" onclick="openModal()"><i class="fa-solid fa-location-dot"></i> Update Location</button>
+      <% } %>
     </div>
     <div class="search-bar">
       <form id="searchForm" style="width: 100%; display: flex;">
@@ -192,9 +194,17 @@
   </div>
   
     <div class="nav-icons">
-      <a href="/orders">Orders</a>
-      <a href="/cart"><i class="fa-solid fa-cart-shopping"></i></a>
-      <a href="account.html"><i class="fa-solid fa-user"></i></a>
+      <% if (customerId) { %>
+        <a href="/profile" title="Profile"><i class="fa-solid fa-user"></i></a>
+        <a href="/orders">Orders</a>
+        <a href="/cart"><i class="fa-solid fa-cart-shopping"></i></a>
+        <% if (locals.isAdmin) { %>
+          <a href="/admin">Admin Dashboard</a>
+        <% } %>
+        <a href="/logout">Logout</a>
+      <% } else { %>
+        <a href="/login">Login</a>
+      <% } %>
     </div>
   </nav>
    <!-- Update Location Modal -->
@@ -208,20 +218,20 @@
       <label for="currentAddress" style="font-weight: bold; color: #0077cc;">Your Address:</label>
       <div class="location-saved-address" id="savedAddresses">
         <!-- Saved addresses will be displayed here dynamically -->
-        <% if (Object.keys(addressDetails).length > 0) { %>
+        <% if (locals.addressDetails && Object.keys(locals.addressDetails).length > 0) { %>
           <!-- Display address details -->
-          <p><strong>Address:</strong> <%= addressDetails.address %></p>
-          <p><strong>City:</strong> <%= addressDetails.city %></p>
-          <p><strong>State:</strong> <%= addressDetails.state %></p>
-          <p><strong>Country:</strong> <%= addressDetails.country %></p>
-          <p><strong>Pincode:</strong> <%= addressDetails.pincode %></p>
+          <p><strong>Address:</strong> <%= locals.addressDetails.address %></p>
+          <p><strong>City:</strong> <%= locals.addressDetails.city %></p>
+          <p><strong>State:</strong> <%= locals.addressDetails.state %></p>
+          <p><strong>Country:</strong> <%= locals.addressDetails.country %></p>
+          <p><strong>Pincode:</strong> <%= locals.addressDetails.pincode %></p>
         <% } else { %>
           <!-- Handle no address details case -->
           <p>No address details available.</p>
         <% } %>
       </div>
       <br>
-      <a href="/address/<%=addressDetails.id%>" class="location-sign-in-box">Add New Address</a>
+      <a href="/address/<%= (locals.addressDetails && locals.addressDetails.id) ? locals.addressDetails.id : customerId %>" class="location-sign-in-box">Add New Address</a>
       
     </div>
   </div>

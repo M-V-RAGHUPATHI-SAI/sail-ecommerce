@@ -87,7 +87,7 @@
         o_date date,
         o_items int NOT null,
         o_total_amt int,
-        o_status enum ('In progress','Ready to Dispatched','Dispatched','Delivered'),
+        o_status enum ('Placed','Packed','Shipped','Delivered','Cancelled') DEFAULT 'Placed',
         foreign key (payment_id) references payment(payment_id),
         FOREIGN KEY (customer_id) REFERENCES customer(customer_id)
         );
@@ -95,9 +95,11 @@
     CREATE TABLE cart (
         cart_id INT AUTO_INCREMENT PRIMARY KEY,
         product_id INT NOT NULL,
+        customer_id INT NOT NULL,
         quantity INT NOT NULL DEFAULT 1,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (product_id) REFERENCES products(p_id),
+        FOREIGN KEY (customer_id) REFERENCES customer(customer_id)
     );
 
 

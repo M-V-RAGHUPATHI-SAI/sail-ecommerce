@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login/Signup - Sail.in</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f4f4f4; }
+        .container { width: 100%; max-width: 600px; display: flex; flex-direction: column; align-items: center; background: white; padding: 20px; box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1); border-radius: 10px; margin-top: 50px; margin-bottom: 50px; }
+        h1 { font-size: 32px; margin-bottom: 10px; text-align: center; }
+        .form-container { width: 100%; max-width: 500px; background: white; padding: 20px; box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2); border-radius: 10px; display: none; margin-top: 10px; }
+        input[type="text"], input[type="email"], input[type="password"], input[type="date"] { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
+        .button-container button { width: 100%; padding: 10px; background-color: #0077cc; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .button-container button:hover { background-color: rgb(41, 83, 174); }
+        .login-signup-toggle { margin-top: 10px; display: flex; justify-content: center; width: 100%; max-width: 500px; border-radius: 25px; background-color: #f1f1f1; overflow: hidden; box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1); }
+        .login-signup-toggle div { flex: 1; text-align: center; padding: 10px 0; cursor: pointer; font-weight: bold; transition: background-color 0.3s ease; }
+        .login-signup-toggle .active { background-color: #0077cc; color: white; }
+        .image { width: 120px; height: 120px; border-radius: 50%; margin-bottom: 10px; }
+        .forgot-password { margin-top: 10px; text-align: center; display: none; }
+        .back-link { margin-bottom: 20px; text-decoration: none; color: #0077cc; font-weight: bold; align-self: flex-start; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="/" class="back-link">&larr; Back to Home</a>
+    <img src="/images/cdf4c76e-43ea-4b74-afb4-2d394a8885c6.jpg" alt="Logo" class="image">
+    <h1>Sail</h1>
+    <div class="login-signup-toggle">
+        <div id="login-toggle" onclick="toggleForm('login')">Login</div>
+        <div id="signup-toggle" onclick="toggleForm('signup')" class="active">Signup</div>
+    </div>
+
+    <div id="login-form" class="form-container">
+        <h2>Login</h2>
+        <% if (locals.error) { %>
+            <div class="error-message" style="color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center;"><%= error %></div>
+        <% } %>
+        <form action="/login" method="POST">
+            <input type="email" name="email" id="loginEmail" placeholder="Email" value="<%= typeof loginEmail !== 'undefined' ? loginEmail : '' %>" required>
+            <input type="password" name="password" id="loginPassword" placeholder="Password" required>
+            <div class="button-container">
+                <button type="submit">Login</button>
+            </div>
+        </form>
+        <div class="forgot-password">
+            <a href="#">Forgot Password?</a>
+        </div>
+    </div>
+
+    <div id="signup-form" class="form-container">
+        <h2>Signup</h2>
+        <% if (locals.signupError) { %>
+            <div class="error-message" style="color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center;"><%= signupError %></div>
+        <% } %>
+        <form action="/signup" method="POST">
+            <input type="text" name="first_name" placeholder="First Name" value="<%= typeof signupData !== 'undefined' && signupData.first_name ? signupData.first_name : '' %>" required>
+            <input type="text" name="last_name" placeholder="Last Name" value="<%= typeof signupData !== 'undefined' && signupData.last_name ? signupData.last_name : '' %>" required>
+            <input type="date" name="date_of_birth" value="<%= typeof signupData !== 'undefined' && signupData.date_of_birth ? signupData.date_of_birth : '' %>" required>
+            <input type="email" name="email" placeholder="Email" value="<%= typeof signupData !== 'undefined' && signupData.email ? signupData.email : '' %>" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <input type="text" name="phno" placeholder="Phone Number" value="<%= typeof signupData !== 'undefined' && signupData.phno ? signupData.phno : '' %>" required>
+            <input type="text" name="address" placeholder="Address" value="<%= typeof signupData !== 'undefined' && signupData.address ? signupData.address : '' %>" required>
+            <input type="text" name="city" placeholder="City" value="<%= typeof signupData !== 'undefined' && signupData.city ? signupData.city : '' %>" required>
+            <input type="text" name="state" placeholder="State" value="<%= typeof signupData !== 'undefined' && signupData.state ? signupData.state : '' %>" required>
+            <input type="text" name="country" placeholder="Country" value="<%= typeof signupData !== 'undefined' && signupData.country ? signupData.country : '' %>" required>
+            <input type="text" name="pincode" placeholder="Pincode" value="<%= typeof signupData !== 'undefined' && signupData.pincode ? signupData.pincode : '' %>" required>
+            <div class="button-container">
+                <button type="submit">Signup</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function toggleForm(formType) {
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+        const loginToggle = document.getElementById('login-toggle');
+        const signupToggle = document.getElementById('signup-toggle');
+
+        if (formType === 'login') {
+            loginForm.style.display = 'block';
+            signupForm.style.display = 'none';
+            loginToggle.classList.add('active');
+            signupToggle.classList.remove('active');
+        } else {
+            loginForm.style.display = 'none';
+            signupForm.style.display = 'block';
+            signupToggle.classList.add('active');
+            loginToggle.classList.remove('active');
+        }
+    }
+
+    window.onload = function() {
+        const hasSignupError = "<%= locals.signupError ? 'true' : '' %>";
+        if (hasSignupError) {
+            toggleForm('signup');
+        } else {
+            toggleForm('login'); 
+        }
+    };
+</script>
+</body>
+</html>
