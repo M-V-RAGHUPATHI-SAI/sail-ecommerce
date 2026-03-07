@@ -6,7 +6,7 @@ dotenv.config();
 const connection = await mysql.createConnection({
     host: process.env.MYSQL_HOST ? process.env.MYSQL_HOST.replace(/'/g, '') : 'localhost',
     user: process.env.MYSQL_USER ? process.env.MYSQL_USER.replace(/'/g, '') : 'root',
-    password: process.env.MYSQL_PASSWORD ? process.env.MYSQL_PASSWORD.replace(/'/g, '') : 'Sai@2006',
+    password: process.env.MYSQL_PASSWORD ? process.env.MYSQL_PASSWORD.replace(/'/g, '') : '',
     database: process.env.MYSQL_DATABASE ? process.env.MYSQL_DATABASE.replace(/'/g, '') : 'saildb'
 });
 
@@ -14,7 +14,7 @@ const connection = await mysql.createConnection({
 const pool = mysql.createPool({
     host: process.env.MYSQL_HOST ? process.env.MYSQL_HOST.replace(/'/g, '') : 'localhost',
     user: process.env.MYSQL_USER ? process.env.MYSQL_USER.replace(/'/g, '') : 'root',
-    password: process.env.MYSQL_PASSWORD ? process.env.MYSQL_PASSWORD.replace(/'/g, '') : 'Sai@2006',
+    password: process.env.MYSQL_PASSWORD ? process.env.MYSQL_PASSWORD.replace(/'/g, '') : '',
     database: process.env.MYSQL_DATABASE ? process.env.MYSQL_DATABASE.replace(/'/g, '') : 'saildb',
     waitForConnections: true,
     connectionLimit: 10,
