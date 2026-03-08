@@ -90,6 +90,17 @@ project-root
 - **Session Segregation**: Carts are bound to `customer_id` via SQL foreign constraints ensuring privacy.
 
 ## Admin Access
-Any user attempting to hit `/admin` requires login. For demonstration, the system currently assumes `admin@sail.in` is an administrator. Modify `middleware/authMiddleware.js` for your specific scoping needs.
+
+Routes under `/admin` require authentication.
+For demonstration purposes, the application currently
+treats the email `admin@sail.in` as an administrator.
+You can modify this behavior in:
+middleware/authMiddleware.js
+
+## Security Note
+
+This project uses hashed passwords (bcrypt) and
+environment variables for sensitive configuration.
+No secrets or credentials are stored in the repository.
 
 *(This beautiful project is ready to set sail!)*
