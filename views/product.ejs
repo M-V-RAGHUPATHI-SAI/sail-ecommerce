@@ -38,13 +38,13 @@
     <div class="product-container">
         <!-- Assume some images will be broken if they don't exist since we rely on file naming conventions here, but that's what we have -->
         <div class="image-gallery">
-            <img src="/images/pd<%= product.p_id %>pic1.jpg" onerror="this.src='/images/pd1pic1.jpg'" alt="Thumbnail 1" onclick="changeImage(this.src)">
-            <img src="/images/pd<%= product.p_id %>pic2.jpg" onerror="this.src='/images/pd1pic2.jpg'" alt="Thumbnail 2" onclick="changeImage(this.src)">
-            <img src="/images/pd<%= product.p_id %>pic3.jpg" onerror="this.src='/images/pd1pic3.jpg'" alt="Thumbnail 3" onclick="changeImage(this.src)">
+            <img src="/images/pd<%= product.p_id %>pic1.jpg" onerror="this.style.display='none'" alt="Thumbnail 1" onclick="changeImage(this.src)">
+            <img src="/images/pd<%= product.p_id %>pic2.jpg" onerror="this.style.display='none'" alt="Thumbnail 2" onclick="changeImage(this.src)">
+            <img src="/images/pd<%= product.p_id %>pic3.jpg" onerror="this.style.display='none'" alt="Thumbnail 3" onclick="changeImage(this.src)">
         </div>
 
         <div class="main-image" id="mainImageContainer">
-            <img src="/images/pd<%= product.p_id %>pic1.jpg" onerror="this.src='/images/pd1pic1.jpg'" alt="Main Image" id="mainImage">
+            <img src="/images/pd<%= product.p_id %>pic1.jpg" onerror="this.style.display='none'" alt="Main Image" id="mainImage">
         </div>
 
         <div class="product-info">
