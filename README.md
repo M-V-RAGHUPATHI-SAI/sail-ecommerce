@@ -56,11 +56,22 @@ project-root
    ```
 
 4. **Initialize Database**:
-   Verify your MySQL server is running, then import the schema:
+   Verify your MySQL server is running, then import the schema into Railway MySQL (you will be prompted for your Railway password):
    ```bash
-   mysql -u root -p < schema.sql
+   mysql -h turntable.proxy.rlwy.net -P 42586 -u root -p railway < schema.sql
    ```
    *(Note: The schema includes the `customer_id` mapping for cart isolation and the modern `o_status` enum logic).*
+
+5. **Verify Database Tables**:
+   After import, you can verify the tables by connecting to the Railway database:
+   ```bash
+   mysql -h turntable.proxy.rlwy.net -P 42586 -u root -p
+   ```
+   Then run:
+   ```sql
+   USE railway;
+   SHOW TABLES;
+   ```
 
 5. **Start the server**:
    ```bash
